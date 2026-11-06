@@ -63,3 +63,17 @@ This dataset captures e-commerce transactions across multiple cities and product
 
 ## Class Balancing Experiment
 Applying oversampling to the training set increased test recall significantly for the minority class, ensuring that the model captures a higher percentage of at-risk users before they drop off completely.
+
+# Part C — LLM Copilot & Customer Support Triage System
+
+## Input Guardrails & PII Redaction
+* **Token Hard-Cap:** Applied an upfront check filtering out tickets exceeding 400 tokens to enforce safety boundaries.
+* **PII Extraction Analytics:** Successfully intercepted and scrubbed **278 sensitive indicators** prior to model pipeline injection.
+  * **Emails:** 55 redacted
+  * **Phone Numbers:** 91 redacted
+  * **Order IDs:** 132 redacted
+* **Leakage Assertions:** Confirmed 100% compliance via regex structural assertions tracking zero remaining PII patterns.
+
+## Resilient System Architecture & Error Recovery
+* **Transient Recovery:** Encountered multiple simulated `503 server busy` errors during runtime. The orchestration framework caught every exception dynamically, applying exponential backoff delays with randomized jitter to ensure complete system recovery without job termination.
+* **Token Budget Control:** Executed an upfront demo clamping allocations at 6,000 tokens, which correctly insulated operations by preemptively identifying **65 tickets** under the `budget_exhausted` triage routing profile.
