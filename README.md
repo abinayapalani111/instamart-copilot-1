@@ -77,3 +77,21 @@ Applying oversampling to the training set increased test recall significantly fo
 ## Resilient System Architecture & Error Recovery
 * **Transient Recovery:** Encountered multiple simulated `503 server busy` errors during runtime. The orchestration framework caught every exception dynamically, applying exponential backoff delays with randomized jitter to ensure complete system recovery without job termination.
 * **Token Budget Control:** Executed an upfront demo clamping allocations at 6,000 tokens, which correctly insulated operations by preemptively identifying **65 tickets** under the `budget_exhausted` triage routing profile.
+
+# Part D — Retrieval-Augmented Generation (RAG) & Multi-Tool Autonomous Agents
+
+## Policy Retrieval & Grounding Evaluation
+* **Chunking Matrix Efficiency:** Document processing successfully parsed standard policy texts into 40-word sliding data segments using a 10-word structural overlap. 
+* **Overlap Retrieval Baseline:** Comparative model analytics confirm that running token queries over a 10-word overlap structural configuration successfully insulates the embedding lookup layer against edge contextual cuts, outperforming zero-overlap parameters in text grounding matching tests.
+
+## Multi-Tool Agent Scenarios & ReAct Loop Results
+The autonomous execution loop managed operations across seven real-world customer test scenario streams cleanly:
+* **Scenario S1 & S2 (Direct Refund):** Successfully authenticated database logs and authorized direct refunds for verified late deliveries.
+* **Scenario S3 (Escalation Rule):** Flagged complex exceptions and logged routing updates directly to the physical human intervention queue.
+* **Scenario S4 & S5 (Policy Denied):** Preemptively identified ineligible requests and issued detailed policy explanations to customers.
+* **Scenario S6 (Record Absent):** Safely intercepted missing database query fields without system tracking dropouts.
+* **Scenario S7 (Iteration Breakout):** Terminated a runaway agent routing path safely via a `FALLBACK_MAX_ITERATIONS` guardrail trip.
+
+## Core Resilience & Crash Recovery Architecture
+* **Safety Circuit Breakers:** Verified 100% compliance across active system thresholds, instantly throwing `FALLBACK_TOKEN_LIMIT` and `FALLBACK_TIMEOUT` routing protections during edge simulations.
+* **State Checkpoint Resumption:** Successfully tested transactional durability. Following a simulated system crash at step 2, the recovery sub-layer parsed the historical checkpoint cache and fulfilled the customer request across both execution halves cleanly.
