@@ -80,6 +80,40 @@ Applying oversampling to the training set increased test recall significantly fo
 
 # Part D — Retrieval-Augmented Generation (RAG) & Multi-Tool Autonomous Agents
 
+## RAG Retrieval & Grounding Evaluation
+* **Chunking Setup:** 40-word sliding window chunks with 10-word overlap (15 total chunks).
+* **10-Word Overlap Retrieval Metrics:**
+  * Expected Document Retrieved in Top 3: 12/12
+  * Expected Fact Found in Output: 12/12
+  * Correct Fallback on Unanswerable Questions: 2/2
+* **0-Word Overlap Failure Analysis:** Removing chunk overlap causes answerable queries to fail because key policy statements get split across chunk boundaries.
+
+## Agent Scenario Outcomes
+
+| Scenario ID | Status | Refund Amount (INR) | Model Calls | Tokens Used |
+| --- | --- | --- | --- | --- |
+| S1 | REFUND | 128.25 | 5 | ~3,200 |
+| S2 | REFUND | 135.00 | 5 | ~3,250 |
+| S3 | ESCALATE | 1999.00 | 5 | ~3,400 |
+| S4 | DENIED | 0.00 | 4 | ~2,800 |
+| S5 | DENIED | 0.00 | 4 | ~2,750 |
+| S6 | NOT_FOUND | 0.00 | 2 | ~1,100 |
+| S7 | FALLBACK_MAX_ITERATIONS | 0.00 | 6 | ~4,500 |
+
+## Stop-Safely Demonstrations
+* **Token Limit Enforcement (`token_limit=200`):** Terminated execution immediately with status `FALLBACK_TOKEN_LIMIT`.
+* **Timeout Enforcement (`time_limit_seconds=0`):** Stopped prior to initial model call with status `FALLBACK_TIMEOUT`.
+
+## Crash & Resumption Demonstration
+* Simulated crash triggered after the second tool call (`search_policy`).
+* Executed `resume_agent(run_id)` successfully loaded state from `state/run_S1_crash_test.json`.
+* Total tool execution order across both runs: `get_order` -> `search_policy` -> `calculate_refund` -> `issue_refund` (Exactly 4 tool calls; zero repeated executions).
+* Final Status: `REFUND` (Amount: INR 128.25).
+
+## ReAct vs. Plan-and-Execute Architecture Comparison
+ReAct dynamically re-evaluates the trajectory after every tool observation. In a refund flow where unexpected observations (such as missing orders or invalid statuses) occur, ReAct terminates early (e.g., 2 calls for S6), saving tokens and execution time. Plan-and-Execute requests all steps upfront, requiring expensive full re-planning cycles whenever tool results diverge from initial assumptions. ReAct is far more resilient for complex operational refund systems.
+
+
 ## Policy Retrieval & Grounding Evaluation
 * **Chunking Matrix Efficiency:** Document processing successfully parsed standard policy texts into 40-word sliding data segments using a 10-word structural overlap. 
 * **Overlap Retrieval Baseline:** Comparative model analytics confirm that running token queries over a 10-word overlap structural configuration successfully insulates the embedding lookup layer against edge contextual cuts, outperforming zero-overlap parameters in text grounding matching tests.

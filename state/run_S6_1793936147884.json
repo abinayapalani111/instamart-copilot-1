@@ -1,0 +1,38 @@
+{
+  "run_id": "run_S6_1793936147884",
+  "scenario_id": "S6",
+  "messages": [
+    {
+      "role": "system",
+      "content": "AGENT: You are an automated Instamart customer support agent handling refund requests using tools."
+    },
+    {
+      "role": "user",
+      "content": "Refund for order ORD-999999 please."
+    },
+    {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+        {
+          "id": "call_1",
+          "name": "get_order",
+          "arguments": {
+            "order_id": "ORD-999999"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_1",
+      "name": "get_order",
+      "content": "{\"error\": \"order not found\"}"
+    }
+  ],
+  "tokens_used": 36,
+  "step": 1,
+  "tools_executed": [
+    "get_order"
+  ]
+}
