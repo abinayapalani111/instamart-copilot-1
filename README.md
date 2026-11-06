@@ -38,3 +38,28 @@
 
 ## Pandas EDA & Descriptive Statistics Answer
 This dataset captures e-commerce transactions across multiple cities and product categories to track user ordering behaviors, fulfillment times, and revenue generation.
+
+# Part B — Customer Segments and Lapse Prediction
+
+## RFM Segmentation Results
+* **Optimal Clusters ($K=4$):** Chosen based on silhouette score ($0.526$) and business interpretability.
+* **Inertia Tradeoff:** Inertia decreases as $K$ increases because extra centroids reduce point-to-centroid distances; however, higher $K$ values risk overfitting without adding actionable business value.
+
+| Segment Name | Count | Mean Recency (days) | Mean Frequency | Mean Monetary (INR) | Premium Flag |
+| --- | --- | --- | --- | --- | --- |
+| Premium VIPs | 138 | 15.2 | 6.8 | 7,130.00 | True |
+| High-Frequency Regulars | 419 | 8.8 | 19.4 | 2,850.00 | False |
+| At-Risk Buyers | 436 | 32.1 | 5.2 | 1,420.00 | False |
+| Casual Buyers | 182 | 45.6 | 2.1 | 650.00 | False |
+
+* **PCA Variance Ratio:** Component 1 explains 0.634, Component 2 explains 0.218 (Total: 0.852).
+
+## Model Evaluation & Preprocessing Leakage Prevention
+* **Cohort Size:** 1,156 customers (443 lapsed, 38.32%).
+* **Baseline Accuracy:** 61.6% (predicting "not lapsed" yields F1 score of 0.00).
+* **Tuned Logistic Regression ($C=1$):** Test F1 = 0.62.
+* **Tuned Random Forest (`max_depth=8`, `min_samples_leaf=10`):** Test F1 = 0.65.
+* **Data Leakage Safeguards:** All scalers, encoders, and oversampling logic were fitted strictly on training data (`X_train`) and only applied to testing data (`X_test`). Features contain zero information dated on or after 2025-09-01.
+
+## Class Balancing Experiment
+Applying oversampling to the training set increased test recall significantly for the minority class, ensuring that the model captures a higher percentage of at-risk users before they drop off completely.
